@@ -38,6 +38,12 @@ release them and then press `ctrl` and `m` simultaneously.
 how to prevent that (for the sequence `ctrl-t ctrl-j k` to word), but didn't do
 anything yet. Report an issue if you have a problem with that.
 
+## How it works
+
+Library binds global key handler to check all keypresses. The reason for this is
+that focus in browsers is often hard to handle and define properly, and most of
+the time it makes no sense to bind against some element.
+
 ## Issues
 
 Please notify me if you don't understand something, I would like to improve
