@@ -10,6 +10,12 @@ Small library to handle key bindings (shortcuts) in browser, for ClojureScript.
 
 ## Usage
 
+Add this to your `:dependecies` vector:
+
+[![Clojars Project](http://clojars.org/keybind/latest-version.svg)](http://clojars.org/keybind)
+
+And then:
+
 ```clj
 
 (require '[keybind :as key])
