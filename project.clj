@@ -1,6 +1,6 @@
 (defproject keybind "0.1.0"
   :description "ClojureScript key bindings (shortcut) library"
-  :url "http://github.com/piranha/keybind"
+  :url "https://github.com/piranha/keybind"
   :license {:name "ISC License"
             :url "http://www.isc.org/downloads/software-support-policy/isc-license/"}
   :plugins [[lein-cljsbuild "1.0.3"]
