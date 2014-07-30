@@ -127,15 +127,26 @@
   (let [parsed (parse spec)]
     (swap! bindings update-in (conj parsed :handlers) dissoc key)))
 
+;; Main external API
+
 (defn bind! [spec key cb]
+  "Binds a sequence of button presses, specified by `spec`, to `cb` when
+  pressed. Keys must be unique per `spec`, and can be used to remove keybinding
+  with `unbind!`.
+
+  `spec` format is emacs-like strings a-la \"ctrl-c k\", \"meta-shift-k\", etc."
   (bind bindings spec key cb))
 
 (defn unbind! [spec key]
+  "Removes a callback, identified by `key`, from button sequence `spec`."
   (unbind bindings spec key))
 
 (defn unbind-all! []
+  "Remove all bindings"
   (reset-sequence!)
   (swap! bindings empty))
+
+;; Global key listener
 
 (defonce bind-keypress-listener
   (js/addEventListener "keydown" dispatch! false))
