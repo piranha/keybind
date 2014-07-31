@@ -24,7 +24,7 @@ And then:
 ```
 
 where `"ctrl-c"` is a button sequence to register on, and `::my-trigger` is a key
-unique for this sequence.
+unique for this sequence - you can use this key to remove binding later on.
 
 ### Format description
 
