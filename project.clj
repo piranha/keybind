@@ -1,6 +1,7 @@
-(defproject keybind "0.1.0"
+(defproject keybind "1.0.0"
   :description "ClojureScript key bindings (shortcut) library"
   :url "https://github.com/piranha/keybind"
+  :scm {:name "git" :url "https://github.com/piranha/keybind"}
   :license {:name "ISC License"
             :url "http://www.isc.org/downloads/software-support-policy/isc-license/"}
   :plugins [[lein-cljsbuild "1.0.3"]
@@ -8,7 +9,8 @@
 
   :profiles
   {:dev {:dependencies [[org.clojure/clojure "1.6.0"]
-                        [org.clojure/clojurescript "0.0-2268"]]}}
+                        [org.clojure/clojurescript "0.0-2371"]]}}
+
   :cljsbuild
   {:builds [{:id "main"
              :source-paths ["src"]

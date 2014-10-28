@@ -44,6 +44,24 @@ release them and then press `ctrl` and `m` simultaneously.
 how to prevent that (for the sequence `ctrl-t ctrl-j k` to word), but didn't do
 anything yet. Report an issue if you have a problem with that.
 
+## Examples
+
+```clojure
+(require '[keybind :as key])
+
+(defn some-mount-function [items current-item]
+  (key/bind! "j" ::next #(go-next items current-item))
+  (key/bind! "shift-space" ::prev #(go-prev items current-item))
+  (key/bind! "C-c C-x j" ::chord #(js/alert "ever heard of emacs chords?")))
+
+(defn some-unmount-function []
+  (key/unbind! "j" ::next)
+  (key/unbind! "shift-space" ::prev)
+  (key/unbind! "C-c C-x j" ::chord)
+  ;; or simply:
+  (key/unbind-all!))
+```
+
 ## How it works
 
 Library binds global key handler to check all keypresses. The reason for this is
