@@ -68,14 +68,14 @@
     (into {} (for [i (range 65 91)]
                [(.toLowerCase (js/String.fromCharCode i)) i]))))
 
-(def ^:private KEYREV
+(def ^:private KNOWN-KEYS
   (into {} (for [[k v] KEYS]
              [v k])))
 
 ;; Data
 
-(defonce bindings (atom {}))
-(defonce pressed (atom []))
+(defonce BINDINGS (atom {}))
+(defonce PRESSED (atom []))
 
 ;; Behavior
 
@@ -103,21 +103,20 @@
              [key (aget e attr)])))
 
 (defn reset-sequence! []
-  (swap! pressed empty))
+  (swap! PRESSED empty))
 
-(defn dispatch! [e]
-  (when (get KEYREV (.-keyCode e))
-    (let [chord    (e->chord e)
-          sequence (conj @pressed chord)
-          inner    (get-in @bindings sequence)
-          handlers (:handlers inner)]
-      (cond
-        (not inner) (reset-sequence!)
-        handlers    (do
-                      (doseq [[_ handler] (:handlers inner)]
-                        (handler e sequence))
-                      (reset-sequence!))
-        :else       (reset! pressed sequence)))))
+(defn dispatch [e bindings]
+  (let [chord    (e->chord e)
+        sequence (conj @PRESSED chord)
+        inner    (get-in bindings sequence)
+        handlers (:handlers inner)]
+    (cond
+      (not inner) (reset-sequence!)
+      handlers    (do
+                    (doseq [[_ handler] (:handlers inner)]
+                      (handler e sequence))
+                    (reset-sequence!))
+      :else       (reset! PRESSED sequence))))
 
 (defn bind [bindings spec key cb]
   "Same as `bind!`, just modifies `bindings` map, you have to handle
@@ -139,18 +138,28 @@
   with `unbind!`.
 
   `spec` format is emacs-like strings a-la \"ctrl-c k\", \"meta-shift-k\", etc."
-  (swap! bindings bind spec key cb))
+  (swap! BINDINGS bind spec key cb))
 
 (defn unbind! [spec key]
   "Removes a callback, identified by `key`, from button sequence `spec`."
-  (swap! bindings unbind spec key))
+  (swap! BINDINGS unbind spec key))
 
 (defn unbind-all! []
-  "Remove all bindings"
+  "Remove all BINDINGS"
   (reset-sequence!)
-  (swap! bindings empty))
+  (swap! BINDINGS empty))
+
+(defn dispatcher! [bindings]
+  "Return a function to be bound on `keydown` event, preferably globally.
+  Accepts atom with bindings.
+
+  Is bound by default with `keycode/BINDINGS` atom, so you don't need to use
+  that."
+  (fn [e]
+    (when (get KNOWN-KEYS (.-keyCode e))
+      (dispatch e @bindings))))
 
 ;; Global key listener
 
 (defonce bind-keypress-listener
-  (js/addEventListener "keydown" dispatch! false))
+  (js/addEventListener "keydown" (dispatcher! BINDINGS) false))

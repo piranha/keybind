@@ -68,12 +68,22 @@ Library binds global key handler to check all keypresses. The reason for this is
 that focus in browsers is often hard to handle and define properly, and most of
 the time it makes no sense to bind against some element.
 
+## Bindings storage
+
+Also, you have to be aware that `keybind/bind!` and `keybind/unbind!`
+use global `keybind/BINDINGS` atom. If you want to use your own atom, just use
+`keybind/bind` and `keybind/unbind` versions (`swap!` your atom with
+them). You'll have to bind `keybind/dispatcher!` on your own though.
+
+I was also thinking how would you have more than a single atom - if you want to
+organize some contexts (on one page you have one set of bindings and another
+page obviously has different actions and different bindings) - and it seems to
+me it's easier to just `reset!` one single atom with necessary bindings when
+it's necessary. That's why `keybind/BINDINGS` is public.
+
+Or just `bind!`/`unbind!` all the time, whatever floats your boat.
+
 ## Issues
 
 Please notify me if you don't understand something, I would like to improve
 documentation but not sure exactly what to do.
-
-One major issue with the library right now is that the `bindings` atom is global
-right now. I'm thinking about best way to mitigate this, especially for the case
-where you have multiple contexts with different keybindings. Not sure this is an
-issue though.
