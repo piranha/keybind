@@ -1,7 +1,6 @@
 (ns keybind-test
-  (:require-macros [cemerick.cljs.test
-                    :refer (is deftest with-test run-tests testing test-var)])
-  (:require [cemerick.cljs.test :as t]
+  (:require [cljs.test :refer-macros [deftest is testing run-tests]]
+            [doo.runner :refer-macros [doo-tests]]
             [keybind :as key]))
 
 (let [MODS {:ctrl "ctrlKey" :shift "shiftKey" :alt "altKey" :meta "metaKey"}]
@@ -77,3 +76,5 @@
       (is (= @count 2)))
 
     (key/unbind! "a" ::a)))
+
+(doo-tests)

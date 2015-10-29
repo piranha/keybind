@@ -4,24 +4,18 @@
   :scm {:name "git" :url "https://github.com/piranha/keybind"}
   :license {:name "ISC License"
             :url "http://www.isc.org/downloads/software-support-policy/isc-license/"}
-  :plugins [[lein-cljsbuild "1.0.3"]
-            [com.cemerick/clojurescript.test "0.3.1"]]
+  :plugins [[lein-cljsbuild "1.1.0"]
+            [lein-doo "0.1.6-SNAPSHOT"]]
 
   :profiles
-  {:dev {:dependencies [[org.clojure/clojure "1.6.0"]
-                        [org.clojure/clojurescript "0.0-2371"]]}}
+  {:dev {:dependencies [[org.clojure/clojurescript "1.7.145" :scope "test"]]}}
 
   :cljsbuild
-  {:builds [{:id "main"
-             :source-paths ["src"]
-             :jar true
-             :compiler {:output-to "target/keybind.js"
-                        :output-dir "target/out-main"
-                        :optimizations :whitespace}}
-            {:id "test"
+  {:builds [{:id "test"
              :source-paths ["src" "test"]
-             :notify-command ["phantomjs" :cljs.test/runner "target/testable.js"]
-             :compiler {:output-to "target/testable.js"
-                        :output-dir "target/out-test"
-                        :optimizations :whitespace
-                        :pretty-print true}}]})
+             :compiler {:output-to "target/test.js"
+                        :output-dir "target/test.out"
+                        :main 'keybind-test
+                        :optimizations :none}}]}
+
+  :doo {:build "test"})

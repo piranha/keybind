@@ -12,8 +12,8 @@
               :ctrl :meta)})
 
 (def ^:private KEYATTRS
-  {"shiftKey" :shift "ctrlKey" :ctrl "altKey" :alt "metaKey" :meta
-   "keyCode" :code})
+  {:shift "shiftKey" :ctrl "ctrlKey" :alt "altKey" :meta "metaKey"
+   :code "keyCode"})
 
 (def ^:private DEFCHORD {:shift false :ctrl false :alt false :meta false})
 
@@ -80,15 +80,15 @@
 ;; Behavior
 
 (defn parse-chord [keystring]
-  (let [bits (.split keystring "-")
-        [mods [button]] (split-at (dec (count bits)) bits)
-        code (get KEYS button)]
+  (let [bits   (.split keystring "-")
+        button (nth bits (-> bits count dec))
+        code   (get KEYS button)]
     (when-not code
       (throw (js/Error. (str "Unknown key '" button
                           "' in keystring '" keystring "'"))))
 
     (into (assoc DEFCHORD :code code)
-      (for [mod mods]
+      (for [mod (drop-last bits)]
         (if-not (get MODS mod)
           (throw (js/Error. (str "Unknown modified '" mod
                               "' in keystring '" keystring "'")))
@@ -99,7 +99,7 @@
     (mapv parse-chord bits)))
 
 (defn e->chord [e]
-  (into {} (for [[attr key] KEYATTRS]
+  (into {} (for [[key attr] KEYATTRS]
              [key (aget e attr)])))
 
 (defn reset-sequence! []
@@ -107,25 +107,29 @@
 
 (defn dispatch! [e]
   (when (get KEYREV (.-keyCode e))
-    (let [chord (e->chord e)
+    (let [chord    (e->chord e)
           sequence (conj @pressed chord)
-          inner (get-in @bindings sequence)]
-      (if-not inner
-        (reset-sequence!)
-        (if-not (:handlers inner)
-          (reset! pressed sequence)
-          (do
-            (doseq [[_ handler] (:handlers inner)]
-              (handler e sequence))
-            (reset-sequence!)))))))
+          inner    (get-in @bindings sequence)
+          handlers (:handlers inner)]
+      (cond
+        (not inner) (reset-sequence!)
+        handlers    (do
+                      (doseq [[_ handler] (:handlers inner)]
+                        (handler e sequence))
+                      (reset-sequence!))
+        :else       (reset! pressed sequence)))))
 
 (defn bind [bindings spec key cb]
+  "Same as `bind!`, just modifies `bindings` map, you have to handle
+  storage (like an atom) yourself."
   (let [parsed (parse spec)]
-    (swap! bindings assoc-in (conj parsed :handlers key) cb)))
+    (assoc-in bindings (conj parsed :handlers key) cb)))
 
 (defn unbind [bindings spec key]
+  "Same as `unbind!`, just modifies `bindings` map, you have to handle
+  storage (like an atom) yourself."
   (let [parsed (parse spec)]
-    (swap! bindings update-in (conj parsed :handlers) dissoc key)))
+    (update-in bindings (conj parsed :handlers) dissoc key)))
 
 ;; Main external API
 
@@ -135,11 +139,11 @@
   with `unbind!`.
 
   `spec` format is emacs-like strings a-la \"ctrl-c k\", \"meta-shift-k\", etc."
-  (bind bindings spec key cb))
+  (swap! bindings bind spec key cb))
 
 (defn unbind! [spec key]
   "Removes a callback, identified by `key`, from button sequence `spec`."
-  (unbind bindings spec key))
+  (swap! bindings unbind spec key))
 
 (defn unbind-all! []
   "Remove all bindings"
