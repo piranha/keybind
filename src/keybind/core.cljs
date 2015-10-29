@@ -1,4 +1,4 @@
-(ns keybind)
+(ns keybind.core)
 
 ;; Definitions
 

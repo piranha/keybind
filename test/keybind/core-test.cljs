@@ -1,7 +1,7 @@
-(ns keybind-test
+(ns keybind.core-test
   (:require [cljs.test :refer-macros [deftest is testing run-tests]]
             [doo.runner :refer-macros [doo-tests]]
-            [keybind :as key]))
+            [keybind.core :as key]))
 
 (let [MODS {:ctrl "ctrlKey" :shift "shiftKey" :alt "altKey" :meta "metaKey"}]
   (defn fire [key]

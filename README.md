@@ -8,6 +8,13 @@ Small library to handle key bindings (shortcuts) in browser, for ClojureScript.
 * Emacs-like key sequences
 * Default modifier (`defmod` is parsed as `cmd` on OS X and `ctrl` elsewhere)
 
+## Changelog
+
+### 2.0.0
+
+- renamed `keybind` to `keybind.core`
+- cleaned up code a bit
+
 ## Usage
 
 Add this to your `:dependecies` vector:
@@ -18,7 +25,7 @@ And then:
 
 ```clj
 
-(require '[keybind :as key])
+(require '[keybind.core :as key])
 
 (key/bind! "ctrl-c" ::my-trigger #(js/console.log "Sequence fired properly"))
 ```
@@ -47,7 +54,7 @@ anything yet. Report an issue if you have a problem with that.
 ## Examples
 
 ```clojure
-(require '[keybind :as key])
+(require '[keybind.core :as key])
 
 (defn some-mount-function [items current-item]
   (key/bind! "j" ::next #(go-next items current-item))
@@ -70,16 +77,16 @@ the time it makes no sense to bind against some element.
 
 ## Bindings storage
 
-Also, you have to be aware that `keybind/bind!` and `keybind/unbind!`
-use global `keybind/BINDINGS` atom. If you want to use your own atom, just use
-`keybind/bind` and `keybind/unbind` versions (`swap!` your atom with
-them). You'll have to bind `keybind/dispatcher!` on your own though.
+Also, you have to be aware that `bind!` and `unbind!` use global `BINDINGS`
+atom. If you want to use your own atom, just use `bind` and `unbind` versions
+(`swap!` your atom with them). You'll have to bind `dispatcher!` on your own
+though.
 
 I was also thinking how would you have more than a single atom - if you want to
 organize some contexts (on one page you have one set of bindings and another
 page obviously has different actions and different bindings) - and it seems to
 me it's easier to just `reset!` one single atom with necessary bindings when
-it's necessary. That's why `keybind/BINDINGS` is public.
+it's necessary. That's why `BINDINGS` is public.
 
 Or just `bind!`/`unbind!` all the time, whatever floats your boat.
 
