@@ -35,7 +35,8 @@ unique for this sequence - you can use this key to remove binding later on.
 
 ### Format description
 
-If you know Emacs format, you're all set.
+If you know Emacs' format, you're all set (not exactly Emacs', though - I
+decided to resort to more common format of modifiers).
 
 In other case, you have to provide a list of modifiers (some of `shift`, `ctrl`,
 `alt`, `win`, `cmd`, `defmod`), followed by a key name. All of those should be
@@ -47,9 +48,13 @@ release them and then press `ctrl` and `m` simultaneously.
 
 **Note 1**: if you want to register on a big letter, use `shift-a`.
 
-**Note 2**: `ctrl-j` in most browsers opens a download window. I have thoughts
-how to prevent that (for the sequence `ctrl-t ctrl-j k` to word), but didn't do
-anything yet. Report an issue if you have a problem with that.
+**Note 2**: `ctrl-j` in most browsers opens a "Downloads" window. I have thoughts
+how to prevent that (for the sequence `ctrl-t ctrl-j k` for example), but didn't
+do anything yet. Report an issue if you have a problem with that.
+
+**Note 3**: looking at the [source][] as a reference for key names makes sense. :)
+
+[source]: https://github.com/piranha/keybind/blob/master/src/keybind/core.cljs
 
 ## Examples
 
@@ -94,3 +99,6 @@ Or just `bind!`/`unbind!` all the time, whatever floats your boat.
 
 Please notify me if you don't understand something, I would like to improve
 documentation but not sure exactly what to do.
+
+Plus it isn't possible to have custom key modifiers right now. Ideally I'd like
+to have that, but right now we're limited to Shift/Control/Alt/Command.
