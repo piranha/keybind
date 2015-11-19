@@ -38,11 +38,12 @@
           "down" 40,
 
           "*" 106,
-          "+" 107, "plus" 107,
-          "-" 109, "minus" 109,
+          "+" 107, "plus" 107, "kpplus" 107,
+          "kpminus" 109,
           ";" 186,
           "=" 187,
           "," 188,
+          "-" 189, "minus" 189,
           "." 190,
           "/" 191,
           "`" 192,
@@ -80,7 +81,7 @@
 ;; Behavior
 
 (defn parse-chord [keystring]
-  (let [bits   (.split keystring "-")
+  (let [bits   (.split keystring #"-(?!$)")
         button (nth bits (-> bits count dec))
         code   (get KEYS button)]
     (when-not code

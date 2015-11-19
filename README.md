@@ -10,6 +10,11 @@ Small library to handle key bindings (shortcuts) in browser, for ClojureScript.
 
 ## Changelog
 
+### 2.0.1
+
+- fixed binding to `-` (and `minus`), now if you need to bind to minus on
+  keypad, use `kpminus`.
+
 ### 2.0.0
 
 - renamed `keybind` to `keybind.core`

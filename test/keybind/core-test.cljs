@@ -50,6 +50,16 @@
 
     (key/unbind! "a" ::a)))
 
+(deftest shortcut-with-minus
+  (let [count (atom 0)]
+    (key/bind! "-" ::minus #(swap! count inc))
+
+    (testing "fired correctly"
+      (fire {:code 189})
+      (is (= @count 1)))
+
+    (key/unbind! "-" ::minus)))
+
 (deftest shortcut-sequence
   (let [count (atom 0)]
     (key/bind! "ctrl-a a" ::a #(swap! count inc))
