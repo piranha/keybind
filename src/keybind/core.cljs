@@ -78,6 +78,8 @@
 (defonce BINDINGS (atom {}))
 (defonce PRESSED (atom []))
 
+(defonce ENABLED? (atom true))
+
 ;; Behavior
 
 (defn parse-chord [keystring]
@@ -150,6 +152,14 @@
   (reset-sequence!)
   (swap! BINDINGS empty))
 
+(defn disable! []
+  "Disable dispatching of key events (but leave existing bindings intact)."
+  (reset! ENABLED? false))
+
+(defn enable! []
+  "Enable dispatching of key events via the existing bindings."
+  (reset! ENABLED? true))
+
 (defn dispatcher! [bindings]
   "Return a function to be bound on `keydown` event, preferably globally.
   Accepts atom with bindings.
@@ -157,7 +167,7 @@
   Is bound by default with `keycode/BINDINGS` atom, so you don't need to use
   that."
   (fn [e]
-    (when (get KNOWN-KEYS (.-keyCode e))
+    (when (and @ENABLED? (get KNOWN-KEYS (.-keyCode e)))
       (dispatch e @bindings))))
 
 ;; Global key listener
