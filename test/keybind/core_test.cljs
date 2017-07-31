@@ -1,7 +1,10 @@
 (ns keybind.core-test
-  (:require [cljs.test :refer-macros [deftest is testing run-tests]]
-            [doo.runner :refer-macros [doo-tests]]
+  (:require [cljs.test :refer-macros [deftest is testing]]
+            [goog.object :as gobj]
+            [doo.runner :refer-macros [doo-all-tests]]
+
             [keybind.core :as key]))
+
 
 (let [MODS {:ctrl "ctrlKey" :shift "shiftKey" :alt "altKey" :meta "metaKey"}]
   (defn fire [key]
@@ -13,6 +16,7 @@
         (aset e attr (get key name false)))
 
       (js/document.dispatchEvent e))))
+
 
 (deftest simple-shortcut
   (let [count (atom 0)]
@@ -50,6 +54,7 @@
 
     (key/unbind! "a" ::a)))
 
+
 (deftest shortcut-with-minus
   (let [count (atom 0)]
     (key/bind! "-" ::minus #(swap! count inc))
@@ -59,6 +64,7 @@
       (is (= @count 1)))
 
     (key/unbind! "-" ::minus)))
+
 
 (deftest shortcut-sequence
   (let [count (atom 0)]
@@ -87,4 +93,16 @@
 
     (key/unbind! "a" ::a)))
 
-(doo-tests)
+
+(set! doo.runner.exit!
+  (fn [success?]
+    (try
+      (if-let [nodejs-exit (and (exists? js/process) (gobj/get js/process "exit"))]
+        (nodejs-exit (if success? 0 1))
+        (doo.runner/*exit-fn* success?))
+      (catch :default e
+        (println "WARNING: doo's exit function was not properly set")
+        (println e)))))
+
+
+(doo-all-tests #"keybind.*-test")
