@@ -79,6 +79,19 @@ do anything yet. Report an issue if you have a problem with that.
   (key/unbind-all!))
 ```
 
+## Disable key bindings temporarily
+
+You may want to disable key bindings without actually removing them (e.g. while focus is on input/textarea elements). This can be accomplished via the `disable!` and `enable!` functions which don't affect the registration of bindings but simply control the dispatching of key events:
+
+```clojure
+(defn some-reagent-component []
+  [:textarea
+    {:value "some text"
+     :on-change handle-change
+     :on-focus key/disable!
+     :on-blur key/enable!}]))
+```
+
 ## How it works
 
 Library binds global key handler to check all keypresses. The reason for this is
