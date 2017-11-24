@@ -6,6 +6,21 @@
             [keybind.core :as key]))
 
 
+(deftest check-parse
+  (is (= (key/parse "a")
+        [{:code 65 :shift false :ctrl false :alt false :meta false}]))
+  (is (= (key/parse "ctrl-a a")
+        [{:code 65 :shift false :ctrl true  :alt false :meta false}
+         {:code 65 :shift false :ctrl false :alt false :meta false}]))
+  (is (= (key/parse "C-a C-x j")
+        [{:code 65 :shift false :ctrl true  :alt false :meta false}
+         {:code 88 :shift false :ctrl true  :alt false :meta false}
+         {:code 74 :shift false :ctrl false :alt false :meta false}]))
+  (is (= (key/parse "C-A a")
+        [{:code 65 :shift true  :ctrl true  :alt false :meta false}
+         {:code 65 :shift false :ctrl false :alt false :meta false}])))
+
+
 (let [MODS {:ctrl "ctrlKey" :shift "shiftKey" :alt "altKey" :meta "metaKey"}]
   (defn fire [key]
     (let [e (js/document.createEvent "Event")]
@@ -92,6 +107,25 @@
       (is (= @count 2)))
 
     (key/unbind! "a" ::a)))
+
+
+(deftest emacs-style
+  (let [count (atom 0)]
+    (key/bind! "C-a C-x j" ::chord #(swap! count inc))
+
+    (testing "emacs-style is working"
+      (fire {:code 65 :ctrl true})
+      (fire {:code 88 :ctrl true})
+      (fire {:code 74})
+      (is (= @count 1)))
+
+    (key/bind! "C-A a" ::shift #(swap! count inc))
+    (testing "shift is working"
+      (fire {:code 65 :shift true :ctrl true})
+      (fire {:code 65})
+      (is (= @count 2)))
+
+    (key/unbind! "C-a C-x j" ::chord)))
 
 
 (set! doo.runner.exit!

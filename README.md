@@ -10,6 +10,10 @@ Small library to handle key bindings (shortcuts) in browser, for ClojureScript.
 
 ## Changelog
 
+### 2.2.0
+
+- handle Emacs-style key bindings (like `C-M-x C-j`)
+
 ### 2.1.0
 
 - added global `disable!`/`enable!` functions (see further for instructions)

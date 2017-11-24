@@ -2,22 +2,22 @@
 
 ;; Definitions
 
-(def ^:private MODS
+(def MODS
   {"shift" :shift
-   "ctrl" :ctrl "control" :ctrl
-   "alt" :alt "option" :alt
-   "win" :meta "cmd" :meta "super" :meta "meta" :meta
+   "ctrl" :ctrl "control" :ctrl "C" :ctrl
+   "alt" :alt "option" :alt "M" :alt
+   "win" :meta "cmd" :meta "super" :meta "meta" :meta "S" :meta
    ;; default modifier for OS X is cmd and for others is ctrl
    "defmod" (if (neg? (.indexOf js/navigator.userAgent "Mac OS X"))
               :ctrl :meta)})
 
-(def ^:private KEYATTRS
+(def KEYATTRS
   {:shift "shiftKey" :ctrl "ctrlKey" :alt "altKey" :meta "metaKey"
    :code "keyCode"})
 
-(def ^:private DEFCHORD {:shift false :ctrl false :alt false :meta false})
+(def DEFCHORD {:shift false :ctrl false :alt false :meta false})
 
-(def ^:private KEYS
+(def KEYS
   (merge {"backspace" 8,
           "tab" 9,
           "enter" 13, "return" 13,
@@ -82,20 +82,27 @@
 
 ;; Behavior
 
+(defn button->code [button]
+  (if-let [code (get KEYS button)]
+    [code nil]
+    [(get KEYS (.toLowerCase button)) {:shift true}]))
+
 (defn parse-chord [keystring]
-  (let [bits   (.split keystring #"-(?!$)")
-        button (nth bits (-> bits count dec))
-        code   (get KEYS button)]
+  (let [bits        (.split keystring #"-(?!$)")
+        button      (nth bits (-> bits count dec))
+        [code mods] (button->code button)]
+
     (when-not code
       (throw (js/Error. (str "Unknown key '" button
                           "' in keystring '" keystring "'"))))
 
-    (into (assoc DEFCHORD :code code)
-      (for [mod (drop-last bits)]
-        (if-not (get MODS mod)
-          (throw (js/Error. (str "Unknown modified '" mod
-                              "' in keystring '" keystring "'")))
-          [(get MODS mod) true])))))
+    (->> (drop-last bits)
+         (map #(or (get MODS %)
+                   (throw (js/Error. (str "Unknown modifier '" mod
+                                       "' in keystring '" keystring "'")))))
+         (reduce
+           (fn [mods mod] (assoc mods mod true))
+           (merge DEFCHORD {:code code} mods)))))
 
 (defn parse [chain]
   (let [bits (.split chain " ")]
