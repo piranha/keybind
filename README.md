@@ -48,8 +48,9 @@ unique for this sequence - you can use this key to remove binding later on.
 
 ### Format description
 
-If you know Emacs' format, you're all set (not exactly Emacs', though - I
-decided to resort to more common format of modifiers).
+If you know Emacs' format, you're all set. Not exactly Emacs - I decided to
+resort to more common names of modifiers, though Emacs-style `C-` and `M-` are
+also supported.
 
 In other case, you have to provide a list of modifiers (some of `shift`, `ctrl`,
 `alt`, `win`, `cmd`, `defmod`), followed by a key name. All of those should be
